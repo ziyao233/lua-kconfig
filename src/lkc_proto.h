@@ -3,6 +3,9 @@
 #define LKC_PROTO_H
 
 #include <stdarg.h>
+#include <stdbool.h>
+
+#include "expr.h"
 
 /* confdata.c */
 void conf_parse(const char *name);
