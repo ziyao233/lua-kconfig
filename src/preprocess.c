@@ -42,7 +42,7 @@ struct env {
 	struct list_head node;
 };
 
-static void env_add(const char *name, const char *value)
+void env_add(const char *name, const char *value)
 {
 	struct env *e;
 
@@ -75,17 +75,7 @@ static char *env_expand(const char *name)
 			return xstrdup(e->value);
 	}
 
-	value = getenv(name);
-	if (!value)
-		return NULL;
-
-	/*
-	 * We need to remember all referenced environment variables.
-	 * They will be written out to include/config/auto.conf.cmd
-	 */
-	env_add(name, value);
-
-	return xstrdup(value);
+	return NULL;
 }
 
 void env_write_dep(struct gstr *s)

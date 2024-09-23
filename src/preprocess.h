@@ -9,6 +9,7 @@ enum variable_flavor {
 };
 
 struct gstr;
+void env_add(const char *name, const char *value);
 void env_write_dep(struct gstr *gs);
 void variable_add(const char *name, const char *value,
 		  enum variable_flavor flavor);

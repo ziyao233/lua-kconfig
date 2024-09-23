@@ -5,7 +5,6 @@
 LUA_PKGNAME		= lua5.4
 
 LUA_CFLAGS		:= $(shell pkg-config --cflags $(LUA_PKGNAME))
-LUA_LDFLAGS		:= $(shell pkg-config --ldflags $(LUA_PKGNAME))
 
 CC			:= cc
 CCLD			:= $(CC)
@@ -21,7 +20,7 @@ MODULE_OBJS		+= src/menu.o src/symbol.o src/util.o src/lua-kconfig.o
 MODULE_OBJS		+= src/lexer.o src/parser.tab.o
 
 $(MODULE): $(MODULE_OBJS)
-	$(CCLD) $(MODULE_OBJS) -o $(MODULE) -shared $(LUA_LDFLAGS) $(LDFLAGS)
+	$(CCLD) $(MODULE_OBJS) -o $(MODULE) -shared $(LDFLAGS)
 
 %.o: %.c
 	$(CC) $< -c -o $@ -fPIC $(LUA_CFLAGS) $(CFLAGS) -Iinclude -DYYDEBUG
