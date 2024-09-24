@@ -14,22 +14,63 @@ lk_setenv(lua_State *l)
 	return 0;
 }
 
-static void
+#define str_field(l, s, name) do { \
+	lua_pushstring(l, s->name);				\
+	lua_setfield(l, -2, #name);				\
+} while (0)
+
+static
+void add_const(lua_State *l, struct symbol *s)
+{
+	if (!s->name || !(s->flags & SYMBOL_CONST))
+		return;
+
+	lua_newtable(l);
+	str_field(l, s, name);
+
+	lua_pushstring(l, sym_type_name(s->type));
+	lua_setfield(l, -2, "type");
+
+	lua_setfield(l, -2, s->name);
+}
+
+static int
 convert_to_lua(lua_State *l)
 {
 	struct symbol *s;
 
+	/* construct constants table */
 	lua_newtable(l);
+	for_all_symbols(s)
+		add_const(l, s);
+	add_const(l, &symbol_yes);
+	add_const(l, &symbol_mod);
+	add_const(l, &symbol_no);
 
+	/* main symbol table */
+	lua_newtable(l);
 	for_all_symbols(s) {
-		if (!s->name)
+		if (!s->name || (s->flags & SYMBOL_CONST))
 			continue;
 
 		lua_newtable(l);
-		lua_pushstring(l, s->name);
-		lua_setfield(l, -2, "name");
+
+		str_field(l, s, name);
+
+		lua_pushstring(l, sym_type_name(s->type));
+		lua_setfield(l, -2, "type");
+
+		lua_newtable(l);
+		for (struct property *p = s->prop; p; p = p->next) {
+			lua_pushinteger(l, p->lineno);
+			lua_setfield(l, -2, p->filename);
+		}
+		lua_setfield(l, -2, "location");
+
 		lua_setfield(l, -2, s->name);
 	}
+
+	return 2;
 }
 
 static int
@@ -38,9 +79,7 @@ lk_parse(lua_State *l)
 	const char *p = luaL_checkstring(l, 1);
 	conf_parse(p);
 
-	convert_to_lua(l);
-
-	return 1;
+	return convert_to_lua(l);
 }
 
 static luaL_Reg funcs[] = {
