@@ -32,6 +32,12 @@ void add_const(lua_State *l, struct symbol *s)
 	lua_pushstring(l, sym_type_name(s->type));
 	lua_setfield(l, -2, "type");
 
+	lua_pushboolean(l, 1);
+	lua_setfield(l, -2, "isConst");
+
+	lua_pushstring(l, sym_get_string_value(s));
+	lua_setfield(l, -2, "value");
+
 	lua_rawsetp(l, -2, s);
 }
 
