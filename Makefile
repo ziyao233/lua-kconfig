@@ -2,6 +2,8 @@
 #	lua-kconfig
 #	Copyright (c) 2024 Yao Zi. All rights reserved.
 
+RELEASE			=
+
 LUA_PKGNAME		= lua5.4
 
 LUA_CFLAGS		:= $(shell pkg-config --cflags $(LUA_PKGNAME))
@@ -11,7 +13,7 @@ CCLD			:= $(CC)
 FLEX			:= flex
 BISON			:= bison
 
-CFLAGS			:=
+CFLAGS			:= -g
 LDFLAGS			:=
 
 MODULE			:= kconfig.so
