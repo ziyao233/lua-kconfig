@@ -168,7 +168,7 @@ convert_to_lua(lua_State *l)
 
 		if (s->dir_dep.expr) {
 			convert_expr(l, 1, 2, s->dir_dep.expr);
-			lua_setfield(l, -2, "dir_dep");
+			lua_setfield(l, -2, "depends");
 		}
 
 		lua_pop(l, 1);
