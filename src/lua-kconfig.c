@@ -171,6 +171,16 @@ convert_to_lua(lua_State *l)
 			lua_setfield(l, -2, "depends");
 		}
 
+		lua_newtable(l);
+		struct property *p;
+		int i = 1;
+		for_all_properties(s, p, P_SELECT) {
+			convert_expr(l, 1, 2, p->expr);
+			lua_rawseti(l, -2, i);
+			i++;
+		}
+		lua_setfield(l, -2, "select");
+
 		lua_pop(l, 1);
 	}
 
