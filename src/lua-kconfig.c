@@ -104,7 +104,7 @@ convert_expr(lua_State *l, int constTblIdx, int symTblIdx, struct expr *expr)
 		struct symbol *left = expr->left.sym, *right = expr->right.sym;
 		search_symbol(l, constTblIdx, symTblIdx, left);
 		lua_setfield(l, -2, "left");
-		search_symbol(l, constTblIdx, symTblIdx, left);
+		search_symbol(l, constTblIdx, symTblIdx, right);
 		lua_setfield(l, -2, "right");
 	} else {
 		struct expr *left = expr->left.expr, *right = expr->right.expr;
@@ -175,7 +175,15 @@ convert_to_lua(lua_State *l)
 		struct property *p;
 		int i = 1;
 		for_all_properties(s, p, P_SELECT) {
+			lua_newtable(l);
 			convert_expr(l, 1, 2, p->expr);
+			lua_setfield(l, -2, "expr");
+
+			if (p->visible.expr) {
+				convert_expr(l, 1, 2, p->visible.expr);
+				lua_setfield(l, -2, "condition");
+			}
+
 			lua_rawseti(l, -2, i);
 			i++;
 		}
